@@ -1,42 +1,123 @@
-# Hypergraph Neural Networks for Higher-Order Drug-Drug Interaction Modeling
+# What if Drug Interactions Are Not Pairwise?
 
-Research codebase for modeling **drug–drug interactions (DDI)** with **hypergraph neural networks (HGNN)** and graph/MLP baselines. Drugs are nodes; multi-drug interactions are represented as **hyperedges**. Pair-level DDI prediction uses a learned scoring head on node embeddings.
+Most machine learning systems for drug–drug interaction (DDI) prediction assume a simple structure: interactions occur between pairs of drugs. This assumption enables the use of standard graph-based models such as GCNs and GATs, but it may not fully reflect how drug combinations behave in real biomedical settings.
+
+In practice, many clinically relevant interactions involve **multiple drugs simultaneously**, where the effect emerges from the combination rather than any single pairwise relationship. This observation motivates a shift from graph-based modeling to **hypergraph-based representations**, where each interaction event can connect more than two drugs.
+
+## The core idea
+
+Instead of representing drug interactions as edges between two nodes, I model them as **hyperedges** in a hypergraph:
+
+- Nodes represent drugs
+- Hyperedges represent multi-drug interaction events
+
+This formulation preserves higher-order structure that is typically lost when interactions are decomposed into pairs.
+
+## What this repository provides
+
+I built an experimental framework to study higher-order drug interaction modeling using **Hypergraph Neural Networks (HGNNs)**. The repository includes:
+
+- Construction of hypergraph representations from drug interaction datasets
+- A Hypergraph Neural Network for higher-order message passing
+- Standard graph-based baselines, including GCN, GAT, and GraphSAGE
+- A non-graph baseline (MLP) for reference
+- A unified evaluation pipeline for fair comparison
+
+The downstream task is formulated as **binary drug–drug interaction prediction**, evaluated using standard classification metrics.
+
+## Why hypergraphs
+
+Traditional graph neural networks rely on pairwise edges, which implicitly assume that interactions are decomposable into binary relationships. This can lead to:
+
+- Loss of multi-drug contextual information
+- Redundant representation of higher-order interactions
+- Structural bias toward pairwise dependencies
+
+Hypergraphs address this limitation by allowing a single interaction event to directly connect multiple drugs, preserving its full structure.
+
+## Modeling approach
+
+The Hypergraph Neural Network operates through two stages of message passing:
+
+1. Aggregation from drug nodes to hyperedges
+2. Propagation from hyperedges back to nodes
+
+This enables each drug representation to incorporate both local and group-level interaction context. The learned embeddings are then used for pairwise interaction scoring.
+
+## Experimental setup
+
+The codebase supports evaluation on standard biomedical interaction datasets, including DrugBank and TWOSIDES-style data. Models are compared under a consistent pipeline with identical preprocessing, negative sampling strategy, and train/test splits.
+
+Performance can be measured using:
+
+- ROC-AUC
+- PR-AUC
+- Precision@K
+- F1-score
+
+**No benchmark numbers are reported in this README.** All metrics must come from running the training and evaluation scripts locally on your own data and hardware.
+
+## Key insight
+
+The main objective of this work is not only to improve predictive performance, but to investigate how **structural assumptions in data representation influence model behavior**.
+
+By moving from pairwise graphs to hypergraphs, interaction events are encoded as higher-order objects rather than decomposed prematurely.
+
+## Limitations
+
+This study remains exploratory in nature:
+
+- Node features are limited unless externally engineered
+- Final prediction is still reduced to pairwise scoring
+- Hypergraph construction depends on dataset quality and formatting
+- No clinical validation is performed
+
+Results should be interpreted as evidence about representation choices, not as clinical applicability.
+
+## Summary
+
+This project explores a simple but important question in representation learning:
+
+> What happens if we model drug interactions as higher-order structures instead of pairwise relationships?
+
+Hypergraph neural networks provide one possible answer by preserving interaction-level structure that standard graph models inherently discard.
+
+---
+
+## Repository
+
+**hypergraph-ddi** — research codebase for modeling drug–drug interactions (DDI) with hypergraph neural networks and graph/MLP baselines.
 
 **Repository:** [github.com/meolen07/hypergraph-ddi](https://github.com/meolen07/hypergraph-ddi)
 
-This is an experimental research tool, not a clinical decision system. Performance depends heavily on data quality, feature choices, and evaluation protocol. Please read the [limitations](#limitations) and [disclaimer](#disclaimer) before using results.
+**Author:** Huynh Mai Linh Nguyen — research implementation; feedback and issues are welcome on GitHub.
 
 ---
 
-## Overview
+## Installation
 
-Many drug interactions involve more than two drugs at once (e.g., combination therapies, polypharmacy). Standard pairwise graphs treat each interaction as an edge between two nodes, which can under-represent **higher-order** structure.
+**Requirements:** Python ≥ 3.9 (see `pyproject.toml`).
 
-This project builds a **hypergraph** from interaction records: each hyperedge connects all drugs involved in one interaction event. An HGNN propagates information along that higher-order structure; **GCN**, **GAT**, and **GraphSAGE** baselines operate on a pair-expanded graph derived from training data; an **MLP** baseline uses node features only.
+```bash
+git clone https://github.com/meolen07/hypergraph-ddi.git
+cd hypergraph-ddi
 
-The task is **binary link prediction** at the drug-pair level (positive pairs from interactions, negatives sampled per config). Hyperedges with more than two drugs are expanded to pairs for scoring, which is a deliberate simplification—see [limitations](#limitations).
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 
----
+pip install -r requirements.txt
+pip install -e .
 
-## Motivation
+export HYPERGRAPH_DDI_ROOT="$(pwd)"
+```
 
-- **Higher-order interactions:** Hypergraphs can represent multi-drug events without forcing a single pairwise edge to stand in for the full interaction.
-- **Reproducible pipeline:** YAML configs, fixed seeds, edge-level splits, and a hypergraph built from **training hyperedges only** to reduce structural leakage.
-- **Baselines for comparison:** The same preprocessing and metrics support HGNN and simpler models on the same splits.
+**PyTorch Geometric:** `torch-geometric` must match your PyTorch and CUDA/CPU build. See the [official PyG installation guide](https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html) if `pip install` fails.
 
-The codebase is meant for **method exploration and ablation**, not as a turnkey benchmark leaderboard. You must run training on your own data to obtain meaningful numbers.
+Optional sanity check (requires dependencies):
 
----
-
-## Features
-
-- **Data sources:** Synthetic demo (smoke tests), [DrugBank](https://go.drugbank.com/) XML, user-provided TWOSIDES-style CSV
-- **Models:** HGNN, MLP, GCN, GAT, GraphSAGE (selected via `model.name` in config)
-- **Preprocessing:** Loaders, normalization, hypergraph construction, edge-level train/val/test splits, negative sampling
-- **Training:** BCE loss, Adam, early stopping on validation ROC-AUC (configurable)
-- **Evaluation:** ROC-AUC, PR-AUC, precision, recall, F1, Precision@K (K = 10, 50, 100)
-- **CLI scripts:** `preprocess`, `train`, `evaluate`, `run_experiment` (multi-seed)
-- **Tests:** Pytest smoke test on synthetic demo only
+```bash
+python scripts/verify_imports.py
+```
 
 ---
 
@@ -65,33 +146,6 @@ hypergraph-ddi/
 ├── scripts/                # CLI entry points
 ├── tests/                  # Smoke tests
 └── experiments/            # Run outputs (logs, checkpoints, plots)
-```
-
----
-
-## Installation
-
-**Requirements:** Python ≥ 3.9 (see `pyproject.toml`).
-
-```bash
-git clone https://github.com/meolen07/hypergraph-ddi.git
-cd hypergraph-ddi
-
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
-
-pip install -r requirements.txt
-pip install -e .
-
-export HYPERGRAPH_DDI_ROOT="$(pwd)"
-```
-
-**PyTorch Geometric:** `torch-geometric` must match your PyTorch and CUDA/CPU build. See the [official PyG installation guide](https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html) if `pip install` fails.
-
-Optional sanity check (requires dependencies):
-
-```bash
-python scripts/verify_imports.py
 ```
 
 ---
@@ -251,16 +305,7 @@ If a split has only one class, some metrics return `nan`.
 
 Document your data version, preprocessing choices, and hardware when reporting results.
 
----
-
-## Limitations
-
-- **Synthetic demo** is not representative of real pharmacology.
-- **Default node features** are placeholders; without real drug descriptors, models mostly reflect graph structure and negatives sampling.
-- **DrugBank parsing** depends on XML export format; always validate counts and spot-check interactions.
-- **TWOSIDES** file layouts differ by release; column names must match your file.
-- **Higher-order hyperedges** are expanded to pairs for link prediction; true multi-way effects are only partially captured.
-- **No bundled SOTA numbers** in this README—all reported performance must come from your own runs.
+**Additional scope notes:** The synthetic demo is not representative of real pharmacology; default node features are placeholders; DrugBank parsing depends on XML export format; TWOSIDES layouts vary by release; higher-order hyperedges are expanded to pairs for link prediction.
 
 ---
 
@@ -287,12 +332,6 @@ If you use this codebase in published work, please cite it appropriately. A BibT
 ```
 
 Please also cite **DrugBank** and **TWOSIDES** (or your data sources) according to their terms.
-
----
-
-## Author
-
-**Huynh Mai Linh Nguyen** — research implementation and maintenance of this repository. Feedback and issues are welcome via GitHub.
 
 ---
 
