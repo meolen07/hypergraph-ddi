@@ -1,0 +1,34 @@
+# DrugBank + HGNN — place drugbank.xml under data/raw/
+project_root: .
+seed: 42
+device: cpu
+
+data:
+  root: data
+  source: drugbank
+  drugbank_xml: ./data/raw/drugbank.xml
+  train_ratio: 0.7
+  val_ratio: 0.15
+  neg_per_pos: 1
+
+model:
+  name: hgnn
+  in_dim: 128
+  hidden_dim: 256
+  out_dim: 128
+  n_layers: 3
+  use_attention: true
+  dropout: 0.2
+
+training:
+  lr: 0.0005
+  weight_decay: 0.00001
+  epochs: 100
+  batch_size: 256
+  early_stopping_patience: 15
+  grad_clip: 1.0
+  monitor_metric: roc_auc
+
+experiment:
+  name: drugbank_hgnn
+  output_dir: experiments

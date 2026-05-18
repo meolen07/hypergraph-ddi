@@ -1,0 +1,31 @@
+# SYNTHETIC DEMO + MLP baseline
+project_root: .
+seed: 42
+device: cpu
+
+data:
+  root: data
+  source: synthetic_demo
+  n_drugs: 50
+  n_hyperedges: 80
+  max_hyperedge_size: 4
+  train_ratio: 0.7
+  val_ratio: 0.15
+  neg_per_pos: 1
+
+model:
+  name: mlp
+  in_dim: 64
+  hidden_dim: 128
+  out_dim: 64
+  dropout: 0.1
+
+training:
+  lr: 0.001
+  epochs: 30
+  batch_size: 64
+  early_stopping_patience: 8
+
+experiment:
+  name: demo_mlp
+  output_dir: experiments
