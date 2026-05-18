@@ -139,4 +139,6 @@ If you use this codebase, please cite your paper and acknowledge DrugBank / TWOS
 
 ## License
 
-Code: MIT (adjust as needed). **DrugBank and TWOSIDES data are subject to their own licenses.**
+This project is licensed under the [MIT License](LICENSE).
+
+**DrugBank and TWOSIDES data are subject to their own licenses** and are not covered by the MIT License above.
