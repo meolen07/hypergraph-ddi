@@ -1,4 +1,4 @@
-# hypergraph-ddi
+# Hypergraph Neural Networks for Higher-Order Drug-Drug Interaction Modeling
 
 Research codebase for modeling **drug–drug interactions (DDI)** with **hypergraph neural networks (HGNN)** and graph/MLP baselines. Drugs are nodes; multi-drug interactions are represented as **hyperedges**. Pair-level DDI prediction uses a learned scoring head on node embeddings.
 
