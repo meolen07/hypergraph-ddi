@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+title: "hypergraph-ddi"
+message: "If you use this project, please cite it using the metadata from this file."
+type: software
+
+authors:
+  - family-names: "Nguyen"
+    given-names: "Huynh Mai Linh"
+
+repository-code: "https://github.com/meolen07/hypergraph-ddi"
+url: "https://github.com/meolen07/hypergraph-ddi"
+
+abstract: >
+  hypergraph-ddi is a solo exploratory research project for drug-drug interaction
+  modeling using hypergraph neural networks and graph neural network baselines.
+  The project provides a reproducible PyTorch pipeline for synthetic benchmark
+  validation and future real-world DDI benchmarking.
+
+keywords:
+  - drug-drug interaction
+  - hypergraph neural networks
+  - graph neural networks
+  - PyTorch
+  - biomedical machine learning
+
+license: MIT
+version: "0.1.0"
+date-released: "2026-05-20"
