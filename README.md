@@ -1,7 +1,7 @@
 # What if Drug Interactions Are Not Pairwise?
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-[![Tests](https://github.com/meolen07/hypergraph-ddi/actions/workflows/tests.yml/badge.svg)](https://github.com/meolen07/hypergraph-ddi/actions/workflows/tests.yml)
+[![Tests](https://github.com/meolen07/hypergraph-ddi/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/meolen07/hypergraph-ddi/actions/workflows/tests.yml)
 ![Project Status](https://img.shields.io/badge/status-exploratory-orange)
 ![Research](https://img.shields.io/badge/research-DDI%20%7C%20Hypergraph-purple)
 
