@@ -55,7 +55,26 @@ Performance can be measured using:
 - Precision@K
 - F1-score
 
-**No benchmark numbers are reported in this README.** All metrics must come from running the training and evaluation scripts locally on your own data and hardware.
+## Results
+
+**Synthetic demo benchmark** (5 seeds: 42–46; CPU; pipeline validation only — not pharmacological evidence). Full per-seed logs and JSON: [RESULTS.md](RESULTS.md).
+
+| Model | ROC-AUC | PR-AUC | F1 |
+|-------|---------|--------|-----|
+| HGNN | 0.4893 ± 0.1034 | 0.7168 ± 0.0750 | 0.8235 ± 0.0000 |
+| GCN | 0.5693 ± 0.0991 | 0.7549 ± 0.0722 | 0.3283 ± 0.4496 |
+| GAT | 0.3824 ± 0.0850 | 0.6477 ± 0.0478 | 0.8235 ± 0.0000 |
+| GraphSAGE | 0.4923 ± 0.0704 | 0.6909 ± 0.0419 | 0.8235 ± 0.0000 |
+| MLP | 0.4970 ± 0.0998 | 0.7069 ± 0.0503 | 0.8235 ± 0.0000 |
+
+Reproduce the full table:
+
+```bash
+export HYPERGRAPH_DDI_ROOT="$(pwd)"
+python scripts/run_synthetic_benchmark.py --seeds 42 43 44 45 46
+```
+
+DrugBank / TWOSIDES numbers are not bundled; run the configs under `config/` on your licensed data.
 
 ## Key insight
 
@@ -252,6 +271,14 @@ python scripts/run_experiment.py \
 ```
 
 Summary written to `experiments/multi_seed_summary.json`. Use `--skip-preprocess` if data are already processed.
+
+**All models (HGNN + baselines) on synthetic data:**
+
+```bash
+python scripts/run_synthetic_benchmark.py --seeds 42 43 44 45 46
+```
+
+Writes [RESULTS.md](RESULTS.md) and `experiments/synthetic_benchmark_summary.json`.
 
 ### Tests
 
