@@ -1,13 +1,26 @@
 # What if Drug Interactions Are Not Pairwise?
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Tests](https://github.com/meolen07/hypergraph-ddi/actions/workflows/tests.yml/badge.svg)
+[![Tests](https://github.com/meolen07/hypergraph-ddi/actions/workflows/tests.yml/badge.svg)](https://github.com/meolen07/hypergraph-ddi/actions/workflows/tests.yml)
 ![Project Status](https://img.shields.io/badge/status-exploratory-orange)
 ![Research](https://img.shields.io/badge/research-DDI%20%7C%20Hypergraph-purple)
 
 Most machine learning systems for drug–drug interaction (DDI) prediction assume a simple structure: interactions occur between pairs of drugs. This assumption enables the use of standard graph-based models such as GCNs and GATs, but it may not fully reflect how drug combinations behave in real biomedical settings.
 
 In practice, many clinically relevant interactions involve **multiple drugs simultaneously**, where the effect emerges from the combination rather than any single pairwise relationship. This observation motivates a shift from graph-based modeling to **hypergraph-based representations**, where each interaction event can connect more than two drugs.
+
+## Current Status
+
+This is a solo exploratory research project.
+
+- Synthetic benchmark: completed
+- Unified training/evaluation pipeline: completed
+- HGNN, GCN, GAT, GraphSAGE, and MLP baselines: completed
+- Multi-seed metric reporting: completed
+- Real-world DDI benchmarking: planned
+- Stronger molecular feature representations: planned
+
+The current results are based on a synthetic smoke-test benchmark and should be interpreted as pipeline validation, not as pharmacological or clinical evidence.
 
 ## The core idea
 
